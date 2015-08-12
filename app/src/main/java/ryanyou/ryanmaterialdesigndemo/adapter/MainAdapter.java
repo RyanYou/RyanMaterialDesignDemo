@@ -49,7 +49,7 @@ public class MainAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         if (convertView == null){
-            convertView = LayoutInflater.from(context).inflate(R.layout.activity_main_adapter,null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_main_activity_adapter,null);
             holder = new ViewHolder();
             holder.tv = (TextView) convertView.findViewById(R.id.main_adapter_tv);
             convertView.setTag(holder);
