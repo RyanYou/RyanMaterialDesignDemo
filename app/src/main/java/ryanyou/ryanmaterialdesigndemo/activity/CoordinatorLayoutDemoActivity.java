@@ -1,20 +1,20 @@
 package ryanyou.ryanmaterialdesigndemo.activity;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.os.Handler;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.widget.ListView;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ryanyou.ryanmaterialdesigndemo.R;
 import ryanyou.ryanmaterialdesigndemo.adapter.CoordinatorLayoutDemoAdapter;
-import ryanyou.ryanmaterialdesigndemo.adapter.MainAdapter;
 import ryanyou.ryanmaterialdesigndemo.bean.TestBean;
 
 /**
@@ -22,7 +22,10 @@ import ryanyou.ryanmaterialdesigndemo.bean.TestBean;
  */
 public class CoordinatorLayoutDemoActivity extends AppCompatActivity{
 
+    public static final String TAG = "CoordinatorLayoutDemoActivity";
     private RecyclerView main_rv;
+    private CoordinatorLayoutDemoAdapter mAdapter;
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,22 +41,25 @@ public class CoordinatorLayoutDemoActivity extends AppCompatActivity{
         initToolbar();
     }
 
+    private int currentItemPosition = 0;
     private void initData() {
-        List<TestBean> data = new ArrayList<TestBean>();
-        for (int i = 0; i < 20 ; i++){
-            TestBean bean = new TestBean();
-            bean.content = String.valueOf(i);
-            data.add(bean);
-        }
+        mAdapter = new CoordinatorLayoutDemoAdapter(CoordinatorLayoutDemoActivity.this,addData(currentItemPosition,20));
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
         main_rv.setLayoutManager(linearLayoutManager);
-        main_rv.setAdapter(new CoordinatorLayoutDemoAdapter(CoordinatorLayoutDemoActivity.this,data));
+        main_rv.setItemAnimator(new DefaultItemAnimator());
+        main_rv.setAdapter(mAdapter);
 
     }
 
     private void initEvents() {
-
+        mAdapter.setOnPullUpRefreshListener(new CoordinatorLayoutDemoAdapter.OnPullUpRefreshListener() {
+            @Override
+            public void onPullUpRefresh() {
+                simulateFetchData();
+            }
+        });
     }
 
     private void initToolbar() {
@@ -64,5 +70,27 @@ public class CoordinatorLayoutDemoActivity extends AppCompatActivity{
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 //        collapsingToolbar.setTitle("Ryan Coordinator Layout Demo~");
     }
+
+    private List<TestBean> addData(int start , int count){
+        currentItemPosition = start + count;
+        List<TestBean> data = new ArrayList<TestBean>();
+        for (int i = start; i <  currentItemPosition ; i++){
+            TestBean bean = new TestBean();
+            bean.content = String.valueOf(i);
+            data.add(bean);
+        }
+        return data;
+    }
+
+    private void simulateFetchData(){
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.append(addData(currentItemPosition, 20));
+                mAdapter.setLoading(false);
+            }
+        },4000);
+    }
+
 
 }
