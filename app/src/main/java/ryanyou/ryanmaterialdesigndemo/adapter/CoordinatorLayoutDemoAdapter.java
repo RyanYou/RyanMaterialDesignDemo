@@ -120,21 +120,11 @@ public class CoordinatorLayoutDemoAdapter extends RecyclerView.Adapter {
     }
 
     private class FooterViewHolder extends RecyclerView.ViewHolder{
-
         public FooterViewHolder(View itemView) {
             super(itemView);
         }
-
     }
 
-//    private boolean isBottom() {
-//        if (.getCount() > 0) {
-//            if (mListView.getLastVisiblePosition() == mListView.getAdapter().getCount() - 1 &&
-//                    mListView.getChildAt(mListView.getChildCount() - 1).getBottom() <= mListView.getHeight()) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
+
 
 }
