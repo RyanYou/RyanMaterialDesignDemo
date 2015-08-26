@@ -6,19 +6,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
 /**
  * Created by RyanYou on 15/8/16.
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener{
 
     public static final String TAG = BaseActivity.class.getSimpleName();
-    protected RequestQueue mRequestQueue;
     protected Context ct;
     protected ProgressDialog mProgressDialog = null;
 
@@ -27,27 +20,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         ct = this;
         initViews();
-        mRequestQueue = Volley.newRequestQueue(this);
         initData();
-    }
-
-    protected  interface OnVolleyStartListener{
-        public void onStart();
-    }
-
-    /**
-     * 利用Volley发送请求
-     * @param method
-     * @param url
-     * @param listener
-     * @param errorListener
-     * @param onVolleyStartListener
-     */
-    protected void loadData(int method,String url,Response.Listener<String> listener,Response.ErrorListener errorListener,OnVolleyStartListener onVolleyStartListener){
-        StringRequest request = new StringRequest(Request.Method.GET, url,listener,errorListener);
-        request.setTag(TAG);
-        if (onVolleyStartListener != null) onVolleyStartListener.onStart();
-        mRequestQueue.add(request);
     }
 
     /**

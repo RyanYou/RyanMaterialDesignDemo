@@ -9,13 +9,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
 import ryanyou.ryanmaterialdesigndemo.R;
 import ryanyou.ryanmaterialdesigndemo.adapter.CoordinatorLayoutDemoAdapter;
+import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
 import ryanyou.ryanmaterialdesigndemo.bean.TestBean;
+import ryanyou.ryanmaterialdesigndemo.rest.RestClient;
 
 /**
  * Created by RyanYou on 15/8/12.
@@ -91,6 +96,7 @@ public class CoordinatorLayoutDemoActivity extends AppCompatActivity{
             }
         },4000);
     }
+
 
 
 }

@@ -13,7 +13,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
 import ryanyou.ryanmaterialdesigndemo.R;
+import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
+import ryanyou.ryanmaterialdesigndemo.rest.RestClient;
 
 public class HotMovieActivity extends BaseActivity {
 
@@ -31,7 +35,7 @@ public class HotMovieActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        updateMovieData();
+        updateMovieData2();
     }
 
     @Override
@@ -57,31 +61,23 @@ public class HotMovieActivity extends BaseActivity {
         });
     }
 
-    private void updateMovieData() {
 
-        String url = "http://api.map.baidu.com/telematics/v3/movie?qt=hot_movie&location=%E5%B9%BF%E5%B7%9E&output=json&ak=ZxNG6jQfvzjWtbWdcVFeEXZ7";
-        loadData(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(final String response) {
-                        Toast.makeText(ct, response.toString(), Toast.LENGTH_LONG).show();
-                        dismissProgressDialog();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(final VolleyError error) {
-                        Toast.makeText(ct, error.toString(), Toast.LENGTH_LONG).show();
-                        dismissProgressDialog();
-                    }
-                },
-                new OnVolleyStartListener() {
-                    @Override
-                    public void onStart() {
-                        showProgressDialog();
-                    }
-                }
-        );
+    //    qt=hot_movie&location=%E5%B9%BF%E5%B7%9E&output=json&ak=ZxNG6jQfvzjWtbWdcVFeEXZ7
+    private void updateMovieData2(){
+        new RestClient().getMovieService().getHotMovieBean("hot_movie", "广州", "json", "ZxNG6jQfvzjWtbWdcVFeEXZ7",
+        new Callback<HotMovieBean>() {
+
+            @Override
+            public void success(HotMovieBean hotMovieBean, retrofit.client.Response response) {
+                Toast.makeText(ct, hotMovieBean.toString(), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(ct, error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
+
 
 }
