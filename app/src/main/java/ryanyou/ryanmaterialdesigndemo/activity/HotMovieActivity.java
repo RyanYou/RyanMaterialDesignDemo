@@ -9,9 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -62,7 +59,6 @@ public class HotMovieActivity extends BaseActivity {
     }
 
 
-    //    qt=hot_movie&location=%E5%B9%BF%E5%B7%9E&output=json&ak=ZxNG6jQfvzjWtbWdcVFeEXZ7
     private void updateMovieData2(){
         new RestClient().getMovieService().getHotMovieBean("hot_movie", "广州", "json", "ZxNG6jQfvzjWtbWdcVFeEXZ7",
         new Callback<HotMovieBean>() {
