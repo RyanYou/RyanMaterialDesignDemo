@@ -1,15 +1,10 @@
 package ryanyou.ryanmaterialdesigndemo.activity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -17,7 +12,6 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import ryanyou.ryanmaterialdesigndemo.R;
-import ryanyou.ryanmaterialdesigndemo.adapter.CoordinatorLayoutDemoAdapter;
 import ryanyou.ryanmaterialdesigndemo.adapter.HotMovieAdapter;
 import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
 import ryanyou.ryanmaterialdesigndemo.service.MovieService;
@@ -50,8 +44,8 @@ public class HotMovieActivity extends BaseActivity {
 
     }
 
-    private void updateMovieData(){
-         RxServiceFactory.getService(MovieService.class).getHotMovieBean("hot_movie", "广州", "json", "ZxNG6jQfvzjWtbWdcVFeEXZ7")
+    private void updateMovieData() {
+        RxServiceFactory.getService(MovieService.class).getHotMovieBean("hot_movie", "广州", "json", "ZxNG6jQfvzjWtbWdcVFeEXZ7")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<HotMovieBean>() {
@@ -72,7 +66,7 @@ public class HotMovieActivity extends BaseActivity {
                         Log.i(TAG, "onNext = " + hotMovieBean.toString());
                         if (hotMovieBean.getResult() != null) {
                             List<HotMovieBean.ResultEntity.MovieEntity> list = hotMovieBean.getResult().getMovie();
-                            mHotMovieAdapter = new HotMovieAdapter(ct,list);
+                            mHotMovieAdapter = new HotMovieAdapter(ct, list);
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ct);
                             linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
                             main_rv.setLayoutManager(linearLayoutManager);

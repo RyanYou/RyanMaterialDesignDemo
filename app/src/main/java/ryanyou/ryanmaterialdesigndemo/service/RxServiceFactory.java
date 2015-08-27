@@ -8,13 +8,13 @@ import retrofit.RestAdapter;
  */
 public class RxServiceFactory {
 
-    private static final String WEATHER_URL = "http://api.map.baidu.com";
+    private static final String BAIDU_API_PATH = "http://api.map.baidu.com";
 
     private RxServiceFactory(){
     }
 
     public static <TService> TService getService(Class <? extends TService> cls){
-         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(WEATHER_URL).build();
+         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(BAIDU_API_PATH).build();
          return restAdapter.create(cls);
     }
 
