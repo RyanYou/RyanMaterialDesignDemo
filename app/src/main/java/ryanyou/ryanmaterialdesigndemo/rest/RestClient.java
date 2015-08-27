@@ -19,4 +19,5 @@ public class RestClient  {
          return mRestAdapter.create(MovieService.class);
     }
 
+
 }

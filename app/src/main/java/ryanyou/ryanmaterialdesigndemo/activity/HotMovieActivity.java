@@ -6,18 +6,20 @@ import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import ryanyou.ryanmaterialdesigndemo.R;
 import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
 import ryanyou.ryanmaterialdesigndemo.rest.RestClient;
 
 public class HotMovieActivity extends BaseActivity {
 
+    private static final String TAG = HotMovieActivity.class.getName();
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView main_rv;
     private Handler mHandler = new Handler();
@@ -32,7 +34,7 @@ public class HotMovieActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        updateMovieData2();
+        updateMovieData();
     }
 
     @Override
@@ -59,20 +61,36 @@ public class HotMovieActivity extends BaseActivity {
     }
 
 
-    private void updateMovieData2(){
-        new RestClient().getMovieService().getHotMovieBean("hot_movie", "广州", "json", "ZxNG6jQfvzjWtbWdcVFeEXZ7",
-        new Callback<HotMovieBean>() {
+    private void updateMovieData(){
+        new RestClient().getMovieService().getHotMovieBean("hot_movie", "广州", "json", "ZxNG6jQfvzjWtbWdcVFeEXZ7")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<HotMovieBean>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i(TAG, "onCompleted");
+                        dismissProgressDialog();
+                    }
 
-            @Override
-            public void success(HotMovieBean hotMovieBean, retrofit.client.Response response) {
-                Toast.makeText(ct, hotMovieBean.toString(), Toast.LENGTH_LONG).show();
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "onError");
+                        dismissProgressDialog();
+                    }
 
-            @Override
-            public void failure(RetrofitError error) {
-                Toast.makeText(ct, error.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
+                    @Override
+                    public void onNext(HotMovieBean hotMovieBean) {
+                        Log.i(TAG, "onNext = " + hotMovieBean.toString());
+                        Toast.makeText(HotMovieActivity.this, "onNext " + hotMovieBean.getStatus().toString(), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                        Log.i(TAG, "onStart");
+                        showProgressDialog();
+                    }
+                });
     }
 
 

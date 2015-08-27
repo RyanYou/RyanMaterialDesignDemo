@@ -3,6 +3,7 @@ package ryanyou.ryanmaterialdesigndemo.rest;
 import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Query;
+import rx.Observable;
 import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
 
 /**
@@ -11,12 +12,11 @@ import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
 public interface MovieService {
 
     @GET("/telematics/v3/movie")
-    public void getHotMovieBean(
+    public Observable<HotMovieBean> getHotMovieBean(
             @Query("qt") String qt,
             @Query("location") String location,
             @Query("output") String output,
-            @Query("ak") String ak,
-            Callback<HotMovieBean> callback);
+            @Query("ak") String ak);
 
 
 }
