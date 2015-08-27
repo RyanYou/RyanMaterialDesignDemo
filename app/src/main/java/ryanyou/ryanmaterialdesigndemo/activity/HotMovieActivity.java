@@ -2,7 +2,6 @@ package ryanyou.ryanmaterialdesigndemo.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
@@ -15,14 +14,14 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import ryanyou.ryanmaterialdesigndemo.R;
 import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
-import ryanyou.ryanmaterialdesigndemo.rest.RestClient;
+import ryanyou.ryanmaterialdesigndemo.service.MovieService;
+import ryanyou.ryanmaterialdesigndemo.service.RxServiceFactory;
 
 public class HotMovieActivity extends BaseActivity {
 
     private static final String TAG = HotMovieActivity.class.getName();
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView main_rv;
-    private Handler mHandler = new Handler();
 
     @Override
     protected void initViews() {
@@ -62,7 +61,7 @@ public class HotMovieActivity extends BaseActivity {
 
 
     private void updateMovieData(){
-        new RestClient().getMovieService().getHotMovieBean("hot_movie", "广州", "json", "ZxNG6jQfvzjWtbWdcVFeEXZ7")
+         RxServiceFactory.getService(MovieService.class).getHotMovieBean("hot_movie", "广州", "json", "ZxNG6jQfvzjWtbWdcVFeEXZ7")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<HotMovieBean>() {
