@@ -3,7 +3,7 @@ package ryanyou.ryanmaterialdesigndemo.bean;
 import java.util.List;
 
 /**
- * Created by Administrator on 2015/8/26.
+ * Created by Ryan.You on 2015/8/26.
  */
 public class HotMovieBean {
 

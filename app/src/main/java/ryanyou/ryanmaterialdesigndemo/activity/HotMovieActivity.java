@@ -1,6 +1,7 @@
 package ryanyou.ryanmaterialdesigndemo.activity;
 
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +18,9 @@ import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
 import ryanyou.ryanmaterialdesigndemo.service.MovieService;
 import ryanyou.ryanmaterialdesigndemo.service.RxServiceFactory;
 
+/**
+ * 首页热门电影Activity
+ */
 public class HotMovieActivity extends BaseActivity {
 
     private static final String TAG = HotMovieActivity.class.getName();
@@ -66,9 +70,10 @@ public class HotMovieActivity extends BaseActivity {
                         Log.i(TAG, "onNext = " + hotMovieBean.toString());
                         if (hotMovieBean.getResult() != null) {
                             List<HotMovieBean.ResultEntity.MovieEntity> list = hotMovieBean.getResult().getMovie();
-                            mHotMovieAdapter = new HotMovieAdapter(ct, list);
-                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ct);
+                            mHotMovieAdapter = new HotMovieAdapter(HotMovieActivity.this, list);
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ct,LinearLayoutManager.HORIZONTAL,true);
                             linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+//                            GridLayoutManager gridLayoutManager = new GridLayoutManager(ct,1);
                             main_rv.setLayoutManager(linearLayoutManager);
                             main_rv.setItemAnimator(new DefaultItemAnimator());
                             main_rv.setAdapter(mHotMovieAdapter);

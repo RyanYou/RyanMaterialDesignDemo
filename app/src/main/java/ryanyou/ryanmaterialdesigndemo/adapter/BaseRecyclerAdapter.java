@@ -1,5 +1,6 @@
 package ryanyou.ryanmaterialdesigndemo.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,10 +15,10 @@ import java.util.List;
 public abstract class BaseRecyclerAdapter<T,VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter {
 
     protected List<T> mData;
-    protected Context context;
+    protected Activity context;
     protected LayoutInflater mLayoutInflater;
 
-    public BaseRecyclerAdapter(Context context,List<T> mData){
+    public BaseRecyclerAdapter(Activity context,List<T> mData){
         this.context = context;
         this.mLayoutInflater = LayoutInflater.from(context);
         setData(mData);
