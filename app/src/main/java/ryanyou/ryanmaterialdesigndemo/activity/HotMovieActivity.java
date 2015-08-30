@@ -90,4 +90,8 @@ public class HotMovieActivity extends BaseActivity {
     }
 
 
+    private void testCommit(){
+        Log.i(TAG,"Hello");
+    }
+
 }
