@@ -55,6 +55,7 @@ public class HotMovieAdapter extends BaseRecyclerAdapter<HotMovieBean.ResultEnti
                     .load("http://nuuneoi.com/uploads/source/playstore/cover.jpg")
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(iv);
+
         }
     }
 
