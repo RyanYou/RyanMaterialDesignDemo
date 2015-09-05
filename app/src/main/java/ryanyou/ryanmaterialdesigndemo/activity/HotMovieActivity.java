@@ -55,8 +55,13 @@ public class HotMovieActivity extends BaseActivity {
     protected void initEvents() {
         mHotMovieAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onClick(int position) {
-                startActivity(new Intent(ct,MovieDetailActivity.class));
+            public void onClick(final int position) {
+                if (mDataSource != null) {
+                    Intent intent = new Intent(HotMovieActivity.this, MovieDetailActivity.class);
+                    intent.putExtra("movie_pic",mDataSource.get(position).getMovie_picture());
+                    intent.putExtra("movie_big_pic",mDataSource.get(position).getMovie_big_picture());
+                    startActivity(intent);
+                }
             }
         });
     }

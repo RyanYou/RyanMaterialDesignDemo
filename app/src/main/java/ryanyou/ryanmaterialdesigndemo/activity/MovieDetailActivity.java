@@ -5,7 +5,11 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +26,7 @@ public class MovieDetailActivity extends BaseActivity {
 
     public static final String TAG = "MovieDetailActivity";
     private RecyclerView main_rv;
+    private ImageView pic_iv;
     private MovieDetailAdapter mAdapter;
     private Handler mHandler = new Handler();
     private int currentItemPosition = 0;
@@ -30,6 +35,7 @@ public class MovieDetailActivity extends BaseActivity {
     protected void initViews() {
         setContentView(R.layout.activity_movie_detial);
         main_rv = (RecyclerView) findViewById(R.id.activity_movie_detail_rv);
+        pic_iv = (ImageView) findViewById(R.id.activity_movie_detail_pic_iv);
         initToolbar();
     }
 
@@ -40,6 +46,9 @@ public class MovieDetailActivity extends BaseActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         main_rv.setLayoutManager(linearLayoutManager);
         main_rv.setAdapter(mAdapter);
+
+        String imgPath = getIntent().getStringExtra("movie_big_pic");
+        Glide.with(this).load(imgPath).into(pic_iv);
     }
 
     @Override
@@ -84,4 +93,13 @@ public class MovieDetailActivity extends BaseActivity {
         }, 2000);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
