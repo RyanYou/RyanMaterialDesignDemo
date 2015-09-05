@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 
+import com.bumptech.glide.BitmapTypeRequest;
+import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -61,10 +63,11 @@ public class MovieDetailActivity extends BaseActivity {
         main_rv.setAdapter(mAdapter);
 
         String imgPath = getIntent().getStringExtra("movie_pic");
-        Glide.with(this).load(imgPath).into(new SimpleTarget<GlideDrawable>() {
+        DrawableTypeRequest dtr = Glide.with(this).load(imgPath);
+        dtr.into(pic_iv);
+        dtr.into(new SimpleTarget<GlideDrawable>() {
             @Override
             public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                pic_iv.setImageDrawable(resource);
                 Bitmap bm = CommonUtils.drawableToBitmap(resource);
                 changeColor(bm);
             }
@@ -115,7 +118,7 @@ public class MovieDetailActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;
