@@ -13,6 +13,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
+import jp.wasabeef.blurry.Blurry;
 import ryanyou.ryanmaterialdesigndemo.R;
 import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
 import ryanyou.ryanmaterialdesigndemo.ui.recyclerview.BaseRecyclerAdapter;

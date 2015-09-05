@@ -24,22 +24,27 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <RelativeLayout
-                android:id="@+id/activity_movie_detail_rl"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 app:layout_collapseMode="parallax"
-                app:layout_scrollFlags="scroll|enterAlways"
-                android:padding="8dp">
+                app:layout_scrollFlags="scroll|enterAlways">
+
+                <ImageView
+                    android:id="@+id/activity_movie_detail_blurry_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY" />
 
                 <ImageView
                     android:id="@+id/activity_movie_detail_pic_iv"
-                    android:layout_width="120dp"
-                    android:layout_height="170dp"
+                    android:layout_width="100dp"
+                    android:layout_height="150dp"
                     android:scaleType="fitXY"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentLeft="true"
-                    android:src="@android:color/darker_gray" />
+                    android:src="@android:color/darker_gray"
+                    android:layout_margin="16dp"/>
 
             </RelativeLayout>
 

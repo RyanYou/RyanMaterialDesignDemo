@@ -14,8 +14,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 
-import com.bumptech.glide.BitmapTypeRequest;
-import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -24,6 +22,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.blurry.Blurry;
 import ryanyou.ryanmaterialdesigndemo.R;
 import ryanyou.ryanmaterialdesigndemo.adapter.MovieDetailAdapter;
 import ryanyou.ryanmaterialdesigndemo.bean.TestBean;
@@ -38,7 +37,6 @@ public class MovieDetailActivity extends BaseActivity {
     public static final String TAG = "MovieDetailActivity";
     private RecyclerView main_rv;
     private ImageView pic_iv;
-    private AppBarLayout app_bar_layout;
     private CollapsingToolbarLayout collapsing_toolbar;
     private MovieDetailAdapter mAdapter;
     private Handler mHandler = new Handler();
@@ -49,7 +47,6 @@ public class MovieDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_movie_detial);
         main_rv = (RecyclerView) findViewById(R.id.activity_movie_detail_rv);
         pic_iv = (ImageView) findViewById(R.id.activity_movie_detail_pic_iv);
-        app_bar_layout = (AppBarLayout) findViewById(R.id.appbar);
         collapsing_toolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         initToolbar();
     }
@@ -62,14 +59,25 @@ public class MovieDetailActivity extends BaseActivity {
         main_rv.setLayoutManager(linearLayoutManager);
         main_rv.setAdapter(mAdapter);
 
-        String imgPath = getIntent().getStringExtra("movie_pic");
-        DrawableTypeRequest dtr = Glide.with(this).load(imgPath);
-        dtr.into(pic_iv);
-        dtr.into(new SimpleTarget<GlideDrawable>() {
+        Glide.with(this).load(getIntent().getStringExtra("movie_pic")).into(new SimpleTarget<GlideDrawable>() {
             @Override
             public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                Bitmap bm = CommonUtils.drawableToBitmap(resource);
-                changeColor(bm);
+                pic_iv.setImageDrawable(resource);
+                //对图片进行高斯模糊
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Blurry.with(MovieDetailActivity.this)
+                                .radius(8)
+                                .sampling(8)
+                                .async()
+                                .animate(200)
+                                .capture(pic_iv)
+                                .into((ImageView) MovieDetailActivity.this.findViewById(R.id.activity_movie_detail_blurry_iv));
+                    }
+                }, 500);
+                //改变status bar的颜色
+                changeStatusBarColor(CommonUtils.drawableToBitmap(resource));
             }
         });
     }
@@ -92,7 +100,7 @@ public class MovieDetailActivity extends BaseActivity {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+//        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
     }
 
     private List<TestBean> addData(int start, int count) {
@@ -127,12 +135,11 @@ public class MovieDetailActivity extends BaseActivity {
     }
 
     @SuppressLint("NewApi")
-    private void changeColor(Bitmap bitmap) {
+    private void changeStatusBarColor(Bitmap bitmap) {
         Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(Palette palette) {
                 Palette.Swatch vibrant = palette.getDarkVibrantSwatch();
-                app_bar_layout.setBackgroundColor(vibrant.getRgb());
                 collapsing_toolbar.setContentScrimColor(vibrant.getRgb());
                 if (android.os.Build.VERSION.SDK_INT >= 21) {
                     Window window = getWindow();
