@@ -60,7 +60,6 @@ public class MovieDetailActivity extends BaseActivity {
         main_rv.setLayoutManager(linearLayoutManager);
         main_rv.setAdapter(mAdapter);
 
-//        Bitmap bm = BitmapFactory.
         String imgPath = getIntent().getStringExtra("movie_pic");
         Glide.with(this).load(imgPath).into(new SimpleTarget<GlideDrawable>() {
             @Override
@@ -124,9 +123,6 @@ public class MovieDetailActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * 界面颜色的更改
-     */
     @SuppressLint("NewApi")
     private void changeColor(Bitmap bitmap) {
         Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
@@ -137,7 +133,6 @@ public class MovieDetailActivity extends BaseActivity {
                 collapsing_toolbar.setContentScrimColor(vibrant.getRgb());
                 if (android.os.Build.VERSION.SDK_INT >= 21) {
                     Window window = getWindow();
-                    // 很明显，这两货是新API才有的。
                     window.setStatusBarColor(vibrant.getRgb());
                     window.setNavigationBarColor(vibrant.getRgb());
                 }
