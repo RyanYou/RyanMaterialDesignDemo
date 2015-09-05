@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ import ryanyou.ryanmaterialdesigndemo.bean.TestBean;
 /**
  * Created by RyanYou on 15/8/13.
  */
-public class CoordinatorLayoutDemoAdapter extends RecyclerView.Adapter {
+public class MovieDetailAdapter extends RecyclerView.Adapter {
 
-    public static final String TAG = CoordinatorLayoutDemoAdapter.class.getSimpleName();
+    public static final String TAG = MovieDetailAdapter.class.getSimpleName();
     private List<TestBean> mData;
     private Context context;
     private static final int TYPE_ITEM = 1;
@@ -51,7 +52,7 @@ public class CoordinatorLayoutDemoAdapter extends RecyclerView.Adapter {
         return isLoading;
     }
 
-    public CoordinatorLayoutDemoAdapter(Context context,List<TestBean> mData){
+    public MovieDetailAdapter(Context context, List<TestBean> mData){
         this.mData = (mData != null) ? mData : new ArrayList<TestBean>();
         this.context = context;
     }
