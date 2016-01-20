@@ -3,6 +3,8 @@ package ryanyou.ryanmaterialdesigndemo.service;
 
 import android.util.Log;
 
+import com.bumptech.glide.disklrucache.DiskLruCache;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
+import ryanyou.ryanmaterialdesigndemo.utils.DiskLruCacheUtils;
 
 /**
  * Created by RyanYou on 2016/1/20.

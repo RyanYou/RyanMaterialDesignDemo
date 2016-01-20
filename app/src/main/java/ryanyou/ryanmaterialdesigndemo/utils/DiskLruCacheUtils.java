@@ -2,25 +2,28 @@ package ryanyou.ryanmaterialdesigndemo.utils;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.jakewharton.disklrucache.DiskLruCache;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * Created by RyanYou on 2016/1/20.
  */
 public class DiskLruCacheUtils {
 
-    public DiskLruCache mDiskLruCache;
+    public static final String TAG = "DiskLruCacheUtils";
+    public static DiskLruCache mDiskLruCache;
     private static final int MAX_SIZE = 30 * 1024 * 1024;
 
     /**
      * 初始化DiskLruCache
      */
-    public void getCache(Context context, String dataType) {
+    public static void initCache(Context context, String dataType) {
         try {
             File cacheDir = CommonUtils.getDiskLruCacheDir(context, dataType);
             if (!cacheDir.exists()) {
@@ -34,24 +37,27 @@ public class DiskLruCacheUtils {
     }
 
     // 将数据写入DiskLruCache
-    private void saveDataToDiskLruCache(final String key) {
+    private static void saveDataToDiskLruCache(final List data) {
+        if (mDiskLruCache == null){
+            throw new IllegalStateException("you must init cache first!");
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     //第一步:获取将要缓存的图片的对应唯一key值.
 //                    String key = Utils.getStringByMD5(mImagePath);
-                    //第二步:获取DiskLruCache的Editor
+                    String key = "arraylist";
                     DiskLruCache.Editor editor = mDiskLruCache.edit(key);
                     if (editor != null) {
-                        //第三步:从Editor中获取OutputStream
                         OutputStream outputStream = editor.newOutputStream(0);
-                        //第四步:下载网络图片且保存至DiskLruCache图片缓存中
-                        boolean isSuccessfull= false;
+                        boolean isSuccessfull = IOUtils.saveListToFile(data, outputStream);
                         if (isSuccessfull) {
                             editor.commit();
+                            Log.d(TAG, "saveDataToDiskLruCache successful!");
                         } else {
                             editor.abort();
+                            Log.d(TAG, "saveDataToDiskLruCache failure!");
                         }
                         mDiskLruCache.flush();
                     }
