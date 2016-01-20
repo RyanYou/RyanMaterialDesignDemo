@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.wasabeef.blurry.Blurry;
+import rx.Observable;
 import ryanyou.ryanmaterialdesigndemo.R;
 import ryanyou.ryanmaterialdesigndemo.adapter.MovieDetailAdapter;
 import ryanyou.ryanmaterialdesigndemo.bean.TestBean;

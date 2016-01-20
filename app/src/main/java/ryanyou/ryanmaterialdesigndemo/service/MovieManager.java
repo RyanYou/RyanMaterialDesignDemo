@@ -1,6 +1,8 @@
 package ryanyou.ryanmaterialdesigndemo.service;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +17,7 @@ import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
  */
 public final class MovieManager {
 
-    private static final String TAG = "MovieManager";
+    private static final String TAG = "LOOK:MovieManager";
     private static MovieManager instance = null;
     private MovieManager(){}
 
@@ -30,7 +32,7 @@ public final class MovieManager {
         return instance;
     }
 
-    private Observable<HotMovieBean> getHotMovieBean(){
+    public Observable<List<HotMovieBean.ResultEntity.MovieEntity>> getMovies(){
         return Observable.create(new Observable.OnSubscribe<HotMovieBean>() {
             @Override
             public void call(final Subscriber<? super HotMovieBean> subscriber) {
@@ -39,23 +41,22 @@ public final class MovieManager {
                         .subscribe(new Action1<HotMovieBean>() {
                             @Override
                             public void call(HotMovieBean hotMovieBean) {
+                                Log.d(TAG, "getMovies() onNext!");
                                 subscriber.onNext(hotMovieBean);
                                 subscriber.onCompleted();
                             }
                         }, new Action1<Throwable>() {
                             @Override
                             public void call(Throwable throwable) {
+                                Log.d(TAG, "getMovies() onError " + throwable.getLocalizedMessage());
                                 subscriber.onError(throwable);
                             }
                         });
             }
-        });
-    }
-
-    public Observable<List<HotMovieBean.ResultEntity.MovieEntity>> getMovies(){
-        return getHotMovieBean().map(new Func1<HotMovieBean, List<HotMovieBean.ResultEntity.MovieEntity>>() {
+        }).map(new Func1<HotMovieBean, List<HotMovieBean.ResultEntity.MovieEntity>>() {
             @Override
             public List<HotMovieBean.ResultEntity.MovieEntity> call(HotMovieBean hotMovieBean) {
+                Log.d(TAG,"getMovies() map!");
                 List<HotMovieBean.ResultEntity.MovieEntity> result = new ArrayList<HotMovieBean.ResultEntity.MovieEntity>();
                 if (hotMovieBean.getResult() != null) {
                     result.addAll(hotMovieBean.getResult().getMovie());
