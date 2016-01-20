@@ -35,7 +35,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.0.13'
     compile 'io.reactivex:rxandroid:0.25.0'
     compile 'jp.wasabeef:blurry:1.0.3'
-
+    compile 'com.jakewharton:disklrucache:2.0.2'
     compile lib_glide
 
 }

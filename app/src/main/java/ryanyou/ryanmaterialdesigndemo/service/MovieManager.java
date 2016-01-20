@@ -13,7 +13,7 @@ import rx.functions.Func1;
 import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
 
 /**
- * Created by youhouchang on 2016/1/20.
+ * Created by RyanYou on 2016/1/20.
  */
 public final class MovieManager {
 
