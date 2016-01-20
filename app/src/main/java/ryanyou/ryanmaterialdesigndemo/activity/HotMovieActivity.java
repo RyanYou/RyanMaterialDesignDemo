@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import ryanyou.ryanmaterialdesigndemo.R;
 import ryanyou.ryanmaterialdesigndemo.adapter.HotMovieAdapter;
 import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
-import ryanyou.ryanmaterialdesigndemo.service.MovieService;
-import ryanyou.ryanmaterialdesigndemo.service.RxServiceFactory;
+import ryanyou.ryanmaterialdesigndemo.service.MovieManager;
 import ryanyou.ryanmaterialdesigndemo.ui.recyclerview.BaseRecyclerAdapter;
 import ryanyou.ryanmaterialdesigndemo.ui.recyclerview.BaseSpaceItemDecoration;
 import ryanyou.ryanmaterialdesigndemo.utils.CommonUtils;
@@ -32,6 +32,7 @@ public class HotMovieActivity extends BaseActivity {
     private RecyclerView main_rv;
     private HotMovieAdapter mHotMovieAdapter;
     private List<HotMovieBean.ResultEntity.MovieEntity> mDataSource;
+    private Subscription mSubscription;
 
     @Override
     protected void initViews() {
@@ -48,7 +49,36 @@ public class HotMovieActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        updateMovieData();
+        mSubscription = MovieManager.get().getMovies()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<HotMovieBean.ResultEntity.MovieEntity>>() {
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                        Log.i(TAG, "onStart");
+                        showProgressDialog();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        Log.i(TAG, "onCompleted");
+                        dismissProgressDialog();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, String.format("onError , %s", e.getLocalizedMessage()));
+                        dismissProgressDialog();
+                        Toast.makeText(ct, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onNext(List<HotMovieBean.ResultEntity.MovieEntity> movieEntities) {
+                        Log.i(TAG, "onNext");
+                        mHotMovieAdapter.append(movieEntities);
+                    }
+                });
     }
 
     @Override
@@ -58,8 +88,8 @@ public class HotMovieActivity extends BaseActivity {
             public void onClick(final int position) {
                 if (mDataSource != null) {
                     Intent intent = new Intent(HotMovieActivity.this, MovieDetailActivity.class);
-                    intent.putExtra("movie_pic",mDataSource.get(position).getMovie_picture());
-                    intent.putExtra("movie_big_pic",mDataSource.get(position).getMovie_big_picture());
+                    intent.putExtra("movie_pic", mDataSource.get(position).getMovie_picture());
+                    intent.putExtra("movie_big_pic", mDataSource.get(position).getMovie_big_picture());
                     startActivity(intent);
                 }
             }
@@ -71,42 +101,12 @@ public class HotMovieActivity extends BaseActivity {
 
     }
 
-    private void updateMovieData() {
-        RxServiceFactory.getService(MovieService.class).getHotMovieBean("hot_movie", "广州", "json", "ZxNG6jQfvzjWtbWdcVFeEXZ7")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<HotMovieBean>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.i(TAG, "onCompleted");
-                        dismissProgressDialog();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG, "onError");
-                        dismissProgressDialog();
-                        Toast.makeText(ct,e.getLocalizedMessage().toString(),Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onNext(HotMovieBean hotMovieBean) {
-                        Log.i(TAG, "onNext = " + hotMovieBean.toString());
-                        if (hotMovieBean.getResult() != null) {
-                            List<HotMovieBean.ResultEntity.MovieEntity> newData = hotMovieBean.getResult().getMovie();
-                            mHotMovieAdapter.append(newData);
-                        }
-                    }
-
-                    @Override
-                    public void onStart() {
-                        super.onStart();
-                        Log.i(TAG, "onStart");
-                        showProgressDialog();
-                    }
-                });
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mSubscription != null && mSubscription.isUnsubscribed()) {
+            mSubscription.unsubscribe();
+            mSubscription = null;
+        }
     }
-
-
-
 }
