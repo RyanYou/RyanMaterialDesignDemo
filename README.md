@@ -1,2 +1,7 @@
 # RyanMaterialDesignDemo
-Material Design Demo which using Retrofit + RxJava at the meantime .
+use many popular Android libraries , including:
+* RxJava
+* Retrofit
+* DiskLruCache
+* Material Design
+
