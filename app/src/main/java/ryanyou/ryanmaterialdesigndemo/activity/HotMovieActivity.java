@@ -21,6 +21,7 @@ import ryanyou.ryanmaterialdesigndemo.service.MovieManager;
 import ryanyou.ryanmaterialdesigndemo.ui.recyclerview.BaseRecyclerAdapter;
 import ryanyou.ryanmaterialdesigndemo.ui.recyclerview.BaseSpaceItemDecoration;
 import ryanyou.ryanmaterialdesigndemo.utils.CommonUtils;
+import ryanyou.ryanmaterialdesigndemo.utils.DiskLruCacheUtils;
 
 /**
  * 首页热门电影Activity
@@ -49,7 +50,7 @@ public class HotMovieActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        mSubscription = MovieManager.get().getMovies()
+        mSubscription = MovieManager.get(this).getMovies(true)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<HotMovieBean.ResultEntity.MovieEntity>>() {
@@ -70,13 +71,15 @@ public class HotMovieActivity extends BaseActivity {
                     public void onError(Throwable e) {
                         Log.i(TAG, String.format("onError , %s", e.getLocalizedMessage()));
                         dismissProgressDialog();
-                        Toast.makeText(ct, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(ct, e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onNext(List<HotMovieBean.ResultEntity.MovieEntity> movieEntities) {
                         Log.i(TAG, "onNext");
-                        mHotMovieAdapter.append(movieEntities);
+                        if (movieEntities != null) {
+                            mHotMovieAdapter.append(movieEntities);
+                        }
                     }
                 });
     }

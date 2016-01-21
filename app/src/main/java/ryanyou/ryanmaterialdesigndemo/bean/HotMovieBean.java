@@ -1,11 +1,12 @@
 package ryanyou.ryanmaterialdesigndemo.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Ryan.You on 2015/8/26.
  */
-public class HotMovieBean {
+public class HotMovieBean implements Serializable{
 
     private int error;
     private String status;
@@ -44,7 +45,7 @@ public class HotMovieBean {
         return result;
     }
 
-    public static class ResultEntity {
+    public static class ResultEntity implements Serializable{
 
         private int cityid;
         private String cityname;
@@ -83,7 +84,7 @@ public class HotMovieBean {
             return movie;
         }
 
-        public static class LocationEntity {
+        public static class LocationEntity implements Serializable {
 
             private double lng;
             private double lat;
@@ -105,7 +106,7 @@ public class HotMovieBean {
             }
         }
 
-        public static class MovieEntity {
+        public static class MovieEntity implements Serializable {
 
             private String movie_id;
             private String movie_name;
