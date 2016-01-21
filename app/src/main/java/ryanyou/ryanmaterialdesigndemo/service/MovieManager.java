@@ -16,6 +16,7 @@ import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import ryanyou.ryanmaterialdesigndemo.bean.HotMovieBean;
+import ryanyou.ryanmaterialdesigndemo.bean.TestBean;
 import ryanyou.ryanmaterialdesigndemo.utils.DiskLruCacheUtils;
 import ryanyou.ryanmaterialdesigndemo.utils.IOUtils;
 
@@ -27,6 +28,7 @@ public final class MovieManager {
     public static final String TAG = "LOOK:MovieManager";
     private static MovieManager instance = null;
     private DiskLruCache mDiskLruCache;
+    private int mDummyCurrentItemPosition = 0;
 
     private MovieManager(Context context) {
         this.mDiskLruCache = DiskLruCacheUtils.getCache(context, TAG);
@@ -88,6 +90,24 @@ public final class MovieManager {
             }
         });
     }
+
+    public Observable<List<TestBean>> getDummyData(final int count){
+        return Observable.create(new Observable.OnSubscribe<List<TestBean>>() {
+            @Override
+            public void call(Subscriber<? super List<TestBean>> subscriber) {
+                List<TestBean> data = new ArrayList<TestBean>();
+                for (int i = mDummyCurrentItemPosition; i < mDummyCurrentItemPosition + count; i++) {
+                    TestBean bean = new TestBean();
+                    bean.content = String.valueOf(i);
+                    data.add(bean);
+                }
+                mDummyCurrentItemPosition += count;
+                subscriber.onNext(data);
+                subscriber.onCompleted();
+            }
+        });
+    }
+
 
     /**
      * 将数据写入DiskLruCache

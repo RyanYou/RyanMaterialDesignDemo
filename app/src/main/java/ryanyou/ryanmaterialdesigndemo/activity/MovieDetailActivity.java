@@ -3,13 +3,11 @@ package ryanyou.ryanmaterialdesigndemo.activity;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -19,14 +17,18 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import jp.wasabeef.blurry.Blurry;
-import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import ryanyou.ryanmaterialdesigndemo.R;
 import ryanyou.ryanmaterialdesigndemo.adapter.MovieDetailAdapter;
 import ryanyou.ryanmaterialdesigndemo.bean.TestBean;
+import ryanyou.ryanmaterialdesigndemo.service.MovieManager;
 import ryanyou.ryanmaterialdesigndemo.utils.CommonUtils;
 
 /**
@@ -41,7 +43,8 @@ public class MovieDetailActivity extends BaseActivity {
     private CollapsingToolbarLayout collapsing_toolbar;
     private MovieDetailAdapter mAdapter;
     private Handler mHandler = new Handler();
-    private int currentItemPosition = 0;
+    private Subscription mGetDummyDataSubscription;
+    private static final int INCREASE_DATA_COUNT = 20;
 
     @Override
     protected void initViews() {
@@ -54,12 +57,11 @@ public class MovieDetailActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        mAdapter = new MovieDetailAdapter(MovieDetailActivity.this, addData(currentItemPosition, 20));
+        mAdapter = new MovieDetailAdapter(MovieDetailActivity.this, null);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         main_rv.setLayoutManager(linearLayoutManager);
         main_rv.setAdapter(mAdapter);
-
         Glide.with(this).load(getIntent().getStringExtra("movie_pic")).into(new SimpleTarget<GlideDrawable>() {
             @Override
             public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
@@ -81,6 +83,7 @@ public class MovieDetailActivity extends BaseActivity {
                 changeStatusBarColor(CommonUtils.drawableToBitmap(resource));
             }
         });
+        simulateFetchData(0);
     }
 
     @Override
@@ -88,7 +91,7 @@ public class MovieDetailActivity extends BaseActivity {
         mAdapter.setOnPullUpRefreshListener(new MovieDetailAdapter.OnPullUpRefreshListener() {
             @Override
             public void onPullUpRefresh() {
-                simulateFetchData();
+                simulateFetchData(2);
             }
         });
     }
@@ -101,38 +104,28 @@ public class MovieDetailActivity extends BaseActivity {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
     }
 
-    private List<TestBean> addData(int start, int count) {
-        currentItemPosition = start + count;
-        List<TestBean> data = new ArrayList<TestBean>();
-        for (int i = start; i < currentItemPosition; i++) {
-            TestBean bean = new TestBean();
-            bean.content = String.valueOf(i);
-            data.add(bean);
-        }
-        return data;
-    }
+    private void simulateFetchData(long delay) {
+        mGetDummyDataSubscription = MovieManager.get(this).getDummyData(INCREASE_DATA_COUNT)
+                .delay(delay, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<TestBean>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
 
-    private void simulateFetchData() {
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.append(addData(currentItemPosition, 20));
-                mAdapter.setLoading(false);
-            }
-        }, 2000);
-    }
+                    @Override
+                    public void onError(Throwable e) {
+                    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+                    @Override
+                    public void onNext(List<TestBean> testBeen) {
+                        mAdapter.append(testBeen);
+                        mAdapter.setLoading(false);
+                    }
+                });
     }
 
     @SuppressLint("NewApi")
@@ -151,4 +144,12 @@ public class MovieDetailActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mGetDummyDataSubscription != null && mGetDummyDataSubscription.isUnsubscribed()) {
+            mGetDummyDataSubscription.unsubscribe();
+            mGetDummyDataSubscription = null;
+        }
+    }
 }
