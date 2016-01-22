@@ -32,6 +32,7 @@ import ryanyou.ryanmaterialdesigndemo.R;
 import ryanyou.ryanmaterialdesigndemo.adapter.MovieDetailAdapter;
 import ryanyou.ryanmaterialdesigndemo.bean.TestBean;
 import ryanyou.ryanmaterialdesigndemo.service.MovieManager;
+import ryanyou.ryanmaterialdesigndemo.utils.BitmapLruCacheHelper;
 import ryanyou.ryanmaterialdesigndemo.utils.CommonUtils;
 
 /**
@@ -47,6 +48,7 @@ public class MovieDetailActivity extends BaseActivity {
     private MovieDetailAdapter mAdapter;
     private Subscription mGetDummyDataSubscription;
     private static final int INCREASE_DATA_COUNT = 20;
+    private String mMoviePicUrl;
 
     @Override
     protected void initViews() {
@@ -65,6 +67,7 @@ public class MovieDetailActivity extends BaseActivity {
         main_rv.setLayoutManager(linearLayoutManager);
         main_rv.setAdapter(mAdapter);
         simulateFetchData(0);
+        mMoviePicUrl = getIntent().getStringExtra("movie_pic");
 
         loadThumbnail()
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -93,7 +96,7 @@ public class MovieDetailActivity extends BaseActivity {
         return Observable.create(new Observable.OnSubscribe<GlideDrawable>() {
             @Override
             public void call(final Subscriber<? super GlideDrawable> subscriber) {
-                Glide.with(MovieDetailActivity.this).load(getIntent().getStringExtra("movie_pic"))
+                Glide.with(MovieDetailActivity.this).load(mMoviePicUrl)
                         .listener(new RequestListener<String, GlideDrawable>() {
                             @Override
                             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -156,7 +159,7 @@ public class MovieDetailActivity extends BaseActivity {
     }
 
     @SuppressLint("NewApi")
-    private void changeStatusBarColor(Bitmap bitmap) {
+    private void changeStatusBarColor(final Bitmap bitmap) {
         Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(Palette palette) {
@@ -171,8 +174,9 @@ public class MovieDetailActivity extends BaseActivity {
                     }
                 } catch (Exception e) {
                     Log.d(TAG, String.format("changeStatusBarColor error! %s", e.getLocalizedMessage()));
+                } finally {
+                    BitmapLruCacheHelper.getMemoryCache().put(mMoviePicUrl, bitmap);
                 }
-
             }
         });
     }
