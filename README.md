@@ -6,4 +6,4 @@ use many popular Android libraries , including:
 * LruCache
 * DiskLruCache
 * Material Design
-
+* LeakCanary

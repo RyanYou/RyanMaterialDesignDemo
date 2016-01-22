@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import jp.wasabeef.blurry.Blurry;
 import rx.Observable;
-import rx.Observer;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -152,17 +151,9 @@ public class MovieDetailActivity extends BaseActivity {
                 .delay(delay, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<TestBean>>() {
+                .subscribe(new Action1<List<TestBean>>() {
                     @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                    }
-
-                    @Override
-                    public void onNext(List<TestBean> testBeen) {
+                    public void call(List<TestBean> testBeen) {
                         mAdapter.append(testBeen);
                         mAdapter.setLoading(false);
                     }
