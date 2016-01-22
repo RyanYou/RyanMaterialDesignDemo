@@ -82,7 +82,14 @@ public class MovieDetailActivity extends BaseActivity {
                                 .animate(200)
                                 .capture(pic_iv)
                                 .into((ImageView) MovieDetailActivity.this.findViewById(R.id.activity_movie_detail_blurry_iv));
-                        changeStatusBarColor(CommonUtils.drawableToBitmap(resource)); //改变status bar的颜色
+                        Bitmap bitmap = BitmapLruCacheHelper.getMemoryCache().get(mMoviePicUrl);
+                        if (bitmap != null){
+                            Log.d(TAG,"can reuse bitmap from memory cache!");
+                            changeStatusBarColor(bitmap);
+                        }else{
+                            Log.d(TAG,"can not reuse bitmap from memory cache!");
+                            changeStatusBarColor(CommonUtils.drawableToBitmap(resource));
+                        }
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -92,6 +99,10 @@ public class MovieDetailActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * 读取缩略图
+     * @return
+     */
     private Observable<GlideDrawable> loadThumbnail() {
         return Observable.create(new Observable.OnSubscribe<GlideDrawable>() {
             @Override
@@ -158,6 +169,10 @@ public class MovieDetailActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * 改变status bar的颜色
+     * @param bitmap
+     */
     @SuppressLint("NewApi")
     private void changeStatusBarColor(final Bitmap bitmap) {
         Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
