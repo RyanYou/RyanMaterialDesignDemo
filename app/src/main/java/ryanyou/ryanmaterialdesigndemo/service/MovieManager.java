@@ -25,7 +25,7 @@ import ryanyou.ryanmaterialdesigndemo.utils.IOUtils;
  */
 public final class MovieManager {
 
-    public static final String TAG = "LOOK:MovieManager";
+    public static final String TAG = "MovieManager";
     private static MovieManager instance = null;
     private DiskLruCache mDiskLruCache;
     private int mDummyCurrentItemPosition = 0;
@@ -108,6 +108,9 @@ public final class MovieManager {
         });
     }
 
+    public void resetDummyPosition(){
+        this.mDummyCurrentItemPosition = 0;
+    }
 
     /**
      * 将数据写入DiskLruCache

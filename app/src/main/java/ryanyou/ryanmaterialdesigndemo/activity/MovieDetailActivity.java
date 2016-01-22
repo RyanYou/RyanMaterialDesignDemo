@@ -2,28 +2,31 @@ package ryanyou.ryanmaterialdesigndemo.activity;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.os.Handler;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import jp.wasabeef.blurry.Blurry;
+import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import ryanyou.ryanmaterialdesigndemo.R;
 import ryanyou.ryanmaterialdesigndemo.adapter.MovieDetailAdapter;
@@ -42,7 +45,6 @@ public class MovieDetailActivity extends BaseActivity {
     private ImageView pic_iv;
     private CollapsingToolbarLayout collapsing_toolbar;
     private MovieDetailAdapter mAdapter;
-    private Handler mHandler = new Handler();
     private Subscription mGetDummyDataSubscription;
     private static final int INCREASE_DATA_COUNT = 20;
 
@@ -62,14 +64,14 @@ public class MovieDetailActivity extends BaseActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         main_rv.setLayoutManager(linearLayoutManager);
         main_rv.setAdapter(mAdapter);
-        Glide.with(this).load(getIntent().getStringExtra("movie_pic")).into(new SimpleTarget<GlideDrawable>() {
-            @Override
-            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                pic_iv.setImageDrawable(resource);
-                //对图片进行高斯模糊
-                mHandler.postDelayed(new Runnable() {
+        simulateFetchData(0);
+
+        loadThumbnail()
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<GlideDrawable>() {
                     @Override
-                    public void run() {
+                    public void call(final GlideDrawable resource) {
                         Blurry.with(MovieDetailActivity.this)
                                 .radius(8)
                                 .sampling(8)
@@ -77,13 +79,38 @@ public class MovieDetailActivity extends BaseActivity {
                                 .animate(200)
                                 .capture(pic_iv)
                                 .into((ImageView) MovieDetailActivity.this.findViewById(R.id.activity_movie_detail_blurry_iv));
+                        changeStatusBarColor(CommonUtils.drawableToBitmap(resource)); //改变status bar的颜色
                     }
-                }, 500);
-                //改变status bar的颜色
-                changeStatusBarColor(CommonUtils.drawableToBitmap(resource));
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.d(TAG, String.format("loadThumbnail onError %s", throwable.getLocalizedMessage()));
+                    }
+                });
+    }
+
+    private Observable<GlideDrawable> loadThumbnail() {
+        return Observable.create(new Observable.OnSubscribe<GlideDrawable>() {
+            @Override
+            public void call(final Subscriber<? super GlideDrawable> subscriber) {
+                Glide.with(MovieDetailActivity.this).load(getIntent().getStringExtra("movie_pic"))
+                        .listener(new RequestListener<String, GlideDrawable>() {
+                            @Override
+                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                subscriber.onError(e);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                subscriber.onNext(resource);
+                                subscriber.onCompleted();
+                                return false;
+                            }
+                        })
+                        .into(pic_iv);
             }
         });
-        simulateFetchData(0);
     }
 
     @Override
@@ -133,13 +160,19 @@ public class MovieDetailActivity extends BaseActivity {
         Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(Palette palette) {
-                Palette.Swatch vibrant = palette.getDarkVibrantSwatch();
-                collapsing_toolbar.setContentScrimColor(vibrant.getRgb());
-                if (android.os.Build.VERSION.SDK_INT >= 21) {
-                    Window window = getWindow();
-                    window.setStatusBarColor(vibrant.getRgb());
-                    window.setNavigationBarColor(vibrant.getRgb());
+                try {
+                    Log.d(TAG, "changeStatusBarColor onGenerated!");
+                    Palette.Swatch vibrant = palette.getDarkVibrantSwatch();
+                    collapsing_toolbar.setContentScrimColor(vibrant.getRgb());
+                    if (android.os.Build.VERSION.SDK_INT >= 21) {
+                        Window window = getWindow();
+                        window.setStatusBarColor(vibrant.getRgb());
+                        window.setNavigationBarColor(vibrant.getRgb());
+                    }
+                } catch (Exception e) {
+                    Log.d(TAG, String.format("changeStatusBarColor error! %s", e.getLocalizedMessage()));
                 }
+
             }
         });
     }
@@ -151,5 +184,6 @@ public class MovieDetailActivity extends BaseActivity {
             mGetDummyDataSubscription.unsubscribe();
             mGetDummyDataSubscription = null;
         }
+        MovieManager.get(this).resetDummyPosition();
     }
 }

@@ -29,7 +29,7 @@ import ryanyou.ryanmaterialdesigndemo.utils.DiskLruCacheUtils;
  */
 public class HotMovieActivity extends BaseActivity {
 
-    private static final String TAG = "LOOK:HotMovieActivity";
+    private static final String TAG = "HotMovieActivity";
     private RecyclerView main_rv;
     private HotMovieAdapter mHotMovieAdapter;
     private List<HotMovieBean.ResultEntity.MovieEntity> mDataSource;
