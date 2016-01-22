@@ -73,7 +73,7 @@ public final class MovieManager {
                         Log.d(TAG, "getMovies() - getDataFromDiskLruCache , success!");
                         subscriber.onNext((HotMovieBean) cacheData);
                         subscriber.onCompleted();
-                    }else {
+                    } else {
                         subscriber.onError(new Throwable("no cache data!"));
                     }
                 }
@@ -91,7 +91,7 @@ public final class MovieManager {
         });
     }
 
-    public Observable<List<TestBean>> getDummyData(final int count){
+    public Observable<List<TestBean>> getDummyData(final int count) {
         return Observable.create(new Observable.OnSubscribe<List<TestBean>>() {
             @Override
             public void call(Subscriber<? super List<TestBean>> subscriber) {
@@ -108,7 +108,7 @@ public final class MovieManager {
         });
     }
 
-    public void resetDummyPosition(){
+    public void resetDummyPosition() {
         this.mDummyCurrentItemPosition = 0;
     }
 

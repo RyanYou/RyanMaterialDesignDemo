@@ -29,18 +29,18 @@ public class MovieDetailAdapter extends RecyclerView.Adapter {
     private OnPullUpRefreshListener mOnPullUpRefreshListener;
     private boolean isLoading = false;
 
-    public void setLoading(boolean newState){
-        if (newState){
+    public void setLoading(boolean newState) {
+        if (newState) {
             isLoading = true;
-            if (mOnPullUpRefreshListener != null){
+            if (mOnPullUpRefreshListener != null) {
                 mOnPullUpRefreshListener.onPullUpRefresh();
             }
-        }else {
+        } else {
             isLoading = false;
         }
     }
 
-    public interface OnPullUpRefreshListener{
+    public interface OnPullUpRefreshListener {
         public void onPullUpRefresh();
     }
 
@@ -48,11 +48,11 @@ public class MovieDetailAdapter extends RecyclerView.Adapter {
         this.mOnPullUpRefreshListener = mOnPullUpRefreshListener;
     }
 
-    public boolean isLoading(){
+    public boolean isLoading() {
         return isLoading;
     }
 
-    public MovieDetailAdapter(Context context, List<TestBean> mData){
+    public MovieDetailAdapter(Context context, List<TestBean> mData) {
         this.mData = (mData != null) ? mData : new ArrayList<TestBean>();
         this.context = context;
     }
@@ -66,9 +66,9 @@ public class MovieDetailAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mData.size()){
+        if (position == mData.size()) {
             return TYPE_FOOTER;
-        }else {
+        } else {
             return TYPE_ITEM;
         }
     }
@@ -98,14 +98,14 @@ public class MovieDetailAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof TestBeanViewHolder) {
             ((TestBeanViewHolder) holder).bindData(mData.get(position));
-        }else if(holder instanceof FooterViewHolder){
+        } else if (holder instanceof FooterViewHolder) {
             if (!isLoading) {
                 setLoading(true);
             }
         }
     }
 
-    private class TestBeanViewHolder extends RecyclerView.ViewHolder{
+    private class TestBeanViewHolder extends RecyclerView.ViewHolder {
         ImageView iv;
         TextView tv;
 
@@ -115,17 +115,16 @@ public class MovieDetailAdapter extends RecyclerView.Adapter {
             tv = (TextView) itemView.findViewById(R.id.main_adapter_tv);
         }
 
-        public void bindData(TestBean bean){
+        public void bindData(TestBean bean) {
             tv.setText(bean.content);
         }
     }
 
-    private class FooterViewHolder extends RecyclerView.ViewHolder{
+    private class FooterViewHolder extends RecyclerView.ViewHolder {
         public FooterViewHolder(View itemView) {
             super(itemView);
         }
     }
-
 
 
 }

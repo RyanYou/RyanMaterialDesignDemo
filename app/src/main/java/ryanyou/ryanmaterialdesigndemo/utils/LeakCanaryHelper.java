@@ -43,7 +43,7 @@ public class LeakCanaryHelper {
                 Method method = watcherClass.getMethod("watch", Object.class, String.class);
                 method.invoke(mRefWatcher, watchReference, referenceName);
             } catch (Exception e) {
-                Log.e(TAG,"leakcanary watch error!");
+                Log.e(TAG, "leakcanary watch error!");
                 e.printStackTrace();
             }
         } else {
@@ -51,15 +51,15 @@ public class LeakCanaryHelper {
         }
     }
 
-    private void install(Application app){
+    private void install(Application app) {
         Class<?> leakcanary = null;
         try {
             leakcanary = Class.forName("com.squareup.leakcanary.LeakCanary");
             Method method = leakcanary.getMethod("install", Application.class);
-            mRefWatcher = method.invoke(null,app);
-            Log.d(TAG,"installByReflect install success!");
+            mRefWatcher = method.invoke(null, app);
+            Log.d(TAG, "installByReflect install success!");
         } catch (Exception e) {
-            Log.e(TAG,"installByReflect error!");
+            Log.e(TAG, "installByReflect error!");
             e.printStackTrace();
         }
     }

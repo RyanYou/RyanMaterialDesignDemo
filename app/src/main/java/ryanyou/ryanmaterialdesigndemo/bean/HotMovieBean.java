@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by Ryan.You on 2015/8/26.
  */
-public class HotMovieBean implements Serializable{
+public class HotMovieBean implements Serializable {
 
     private int error;
     private String status;
@@ -45,7 +45,7 @@ public class HotMovieBean implements Serializable{
         return result;
     }
 
-    public static class ResultEntity implements Serializable{
+    public static class ResultEntity implements Serializable {
 
         private int cityid;
         private String cityname;

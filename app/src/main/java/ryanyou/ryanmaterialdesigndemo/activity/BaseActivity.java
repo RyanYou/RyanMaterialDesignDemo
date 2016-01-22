@@ -9,7 +9,7 @@ import android.view.View;
 /**
  * Created by RyanYou on 15/8/16.
  */
-public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener{
+public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String TAG = BaseActivity.class.getSimpleName();
     protected Context ct;
@@ -39,7 +39,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
      */
     protected abstract void initEvents();
 
-    protected void showProgressDialog(){
+    protected void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(ct);
             mProgressDialog.setMessage("加载中。。");
@@ -48,7 +48,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         mProgressDialog.show();
     }
 
-    protected void dismissProgressDialog(){
+    protected void dismissProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }

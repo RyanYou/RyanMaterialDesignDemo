@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by RyanYou on 15/8/27.
  */
-public abstract class BaseRecyclerAdapter<T,VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter {
+public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter {
 
     private static final String TAG = BaseRecyclerAdapter.class.getSimpleName();
     protected List<T> mData;
@@ -24,21 +24,21 @@ public abstract class BaseRecyclerAdapter<T,VH extends RecyclerView.ViewHolder> 
         this.mOnItemClickListener = mOnItemClickListener;
     }
 
-    public interface OnItemClickListener{
+    public interface OnItemClickListener {
         void onClick(int position);
     }
 
-    public BaseRecyclerAdapter(Activity context,List<T> mData){
+    public BaseRecyclerAdapter(Activity context, List<T> mData) {
         this.context = context;
         this.mLayoutInflater = LayoutInflater.from(context);
         setData(mData);
     }
 
-    public void setData(List<T> mData){
+    public void setData(List<T> mData) {
         this.mData = (mData != null) ? mData : new ArrayList<T>();
     }
 
-    public void append(List<T> newData){
+    public void append(List<T> newData) {
         mData.addAll(newData);
         notifyDataSetChanged();
     }
@@ -52,7 +52,7 @@ public abstract class BaseRecyclerAdapter<T,VH extends RecyclerView.ViewHolder> 
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        if (mOnItemClickListener != null && holder.itemView != null){
+        if (mOnItemClickListener != null && holder.itemView != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -82,11 +82,11 @@ public class MovieDetailActivity extends BaseActivity {
                                 .capture(pic_iv)
                                 .into((ImageView) MovieDetailActivity.this.findViewById(R.id.activity_movie_detail_blurry_iv));
                         Bitmap bitmap = BitmapLruCacheHelper.getMemoryCache().get(mMoviePicUrl);
-                        if (bitmap != null){
-                            Log.d(TAG,"can reuse bitmap from memory cache!");
+                        if (bitmap != null) {
+                            Log.d(TAG, "can reuse bitmap from memory cache!");
                             changeStatusBarColor(bitmap);
-                        }else{
-                            Log.d(TAG,"can not reuse bitmap from memory cache!");
+                        } else {
+                            Log.d(TAG, "can not reuse bitmap from memory cache!");
                             changeStatusBarColor(CommonUtils.drawableToBitmap(resource));
                         }
                     }
@@ -100,6 +100,7 @@ public class MovieDetailActivity extends BaseActivity {
 
     /**
      * 读取缩略图
+     *
      * @return
      */
     private Observable<GlideDrawable> loadThumbnail() {
@@ -162,6 +163,7 @@ public class MovieDetailActivity extends BaseActivity {
 
     /**
      * 改变status bar的颜色
+     *
      * @param bitmap
      */
     @SuppressLint("NewApi")

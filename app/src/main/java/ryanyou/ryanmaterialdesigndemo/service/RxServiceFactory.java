@@ -10,12 +10,12 @@ public class RxServiceFactory {
 
     private static final String BAIDU_API_PATH = "http://api.map.baidu.com";
 
-    private RxServiceFactory(){
+    private RxServiceFactory() {
     }
 
-    public static <TService> TService getService(Class <? extends TService> cls){
-         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(BAIDU_API_PATH).build();
-         return restAdapter.create(cls);
+    public static <TService> TService getService(Class<? extends TService> cls) {
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(BAIDU_API_PATH).build();
+        return restAdapter.create(cls);
     }
 
 
