@@ -5,6 +5,8 @@ package com.example;
  */
 public class TestDeadLockDemo {
 
+    private static final String TAG = "TestDeadLockDemo";
+
     public static void main(String[] args){
         Object phone = new Object();
         Object pad = new Object();
