@@ -1,15 +1,15 @@
 package ryanyou.ryanmaterialdesigndemo.service;
 
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+
 import java.io.IOException;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by Ryan.You on 2016/3/18.
@@ -18,9 +18,11 @@ public class WeatherManager {
 
     public static final String TAG = "WeatherManager";
     public static WeatherManager instance = null;
+    public static final String API_KEY = "ZxNG6jQfvzjWtbWdcVFeEXZ7";
 
     public static void main(String[] args) {
-        WeatherManager.getInstance().getWeather();
+//        WeatherManager.getInstance().getWeather("广州", API_KEY);
+        WeatherManager.getInstance().postWeather("广州", API_KEY);
     }
 
     public static WeatherManager getInstance() {
@@ -34,35 +36,55 @@ public class WeatherManager {
         return instance;
     }
 
-    public void getWeather() {
+    public void getWeather(String location, String apiKey) {
         OkHttpClient okHttpClient = new OkHttpClient();
-
-        RequestBody formBody = new FormBody.Builder()
-                .add("location","广州")
-                .add("output","json")
-                .add("ak","ZxNG6jQfvzjWtbWdcVFeEXZ7")
-                .build();
 
         final Request request = new Request.Builder()
                 .url("http://api.map.baidu.com/telematics/v3/weather?location=%E5%8C%97%E4%BA%AC&output=json&ak=ZxNG6jQfvzjWtbWdcVFeEXZ7")
                 .get()
-//                .url("http://api.map.baidu.com/telematics/v3/weather")
-//                .post(formBody)
                 .build();
+
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-//                Log.i(TAG, String.format("onFailure e = %s", e.getLocalizedMessage()));
+            public void onFailure(Request request, IOException e) {
                 System.out.println(String.format("onFailure e = %s", e.getLocalizedMessage()));
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-//                Log.i(TAG, String.format("onResponse response = %s", response.body().toString()));
+            public void onResponse(Response response) throws IOException {
                 System.out.println(String.format("onResponse response = %s", response.body().string()));
             }
         });
+    }
+
+    private void postWeather(String location, String apiKey) {
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("location", location)
+                .add("output", "json")
+                .add("ak", apiKey)
+                .build();
+
+        Request request = new Request.Builder()
+                .url("http://api.map.baidu.com/telematics/v3/weather")
+                .post(formBody)
+                .build();
+
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                System.out.println(String.format("onFailure e = %s", e.getLocalizedMessage()));
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                System.out.println(String.format("onResponse response = %s", response.body().string()));
+            }
+        });
+
     }
 
 }
